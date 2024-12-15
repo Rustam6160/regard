@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+</head>
+<body>
+    <h2>Доступные категории и товары:</h2>
+    <div class="categories">
+        {% for category, items in items.items %}
+            <div class="category">
+                <h3>{{ category|title }}</h3>
+                <ul>
+                    {% for item in items %}
+                        <li>
+                            {{ item.name }}
+                            <a href="{% url 'configurator' category item.id %}">Выбрать для конфигурации</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

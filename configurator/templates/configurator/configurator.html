@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Configurator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .product-list { display: flex; flex-wrap: wrap; gap: 20px; }
+        .product { border: 1px solid #ddd; padding: 10px; width: 200px; text-align: center; }
+        .selected-products { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Selected Components:</h2>
+    <ul>
+        {% for category, selected_product in selected_products.items %}
+            <li id="selected-product">{{ category }}: {{ selected_product.name }}</li>
+            {% if category and selected_product%}
+                <a href="{% url 'configurator' category selected_product.id %}?delete=True">удалить</a>
+
+                <p>{{ request.get_full_path }}</p>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <h2>Available Components:</h2>
+    <div id="compatible-products">
+        {% for category, products in available_products.items %}
+            <h3>{{ category }}</h3>
+            <ul id="category-{{ category | lower }}">
+                {% for product in products %}
+                    <li>
+                        {{ product.name }}
+                        <a href="{% url 'configurator' category product.id %}">Select</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+
+
+</body>
+</html>
+
+
+
