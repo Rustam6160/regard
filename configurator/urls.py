@@ -7,4 +7,5 @@ urlpatterns = [
          ConfiguratorView.as_view(), name='configurator'),
 
     path('', ProductView.as_view(), name='products'),
+    path('order/', OrderComponents.as_view(), name='order'),
 ]

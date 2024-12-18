@@ -1,47 +1,77 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Configurator</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .product-list { display: flex; flex-wrap: wrap; gap: 20px; }
-        .product { border: 1px solid #ddd; padding: 10px; width: 200px; text-align: center; }
-        .selected-products { margin-bottom: 20px; }
-    </style>
+    <link rel="stylesheet" href="{% static 'configurator/css/configurator.css' %}">
 </head>
 <body>
-    <h2>Selected Components:</h2>
-    <ul>
-        {% for category, selected_product in selected_products.items %}
-            <li id="selected-product">{{ category }}: {{ selected_product.name }}</li>
-            {% if category and selected_product%}
-                <a href="{% url 'configurator' category selected_product.id %}?delete=True">удалить</a>
+    <header class="header">
+        <div class="container">
+            <h1>PC Configurator</h1>
+        </div>
+    </header>
 
-                <p>{{ request.get_full_path }}</p>
-            {% endif %}
-        {% endfor %}
-    </ul>
-
-    <h2>Available Components:</h2>
-    <div id="compatible-products">
-        {% for category, products in available_products.items %}
-            <h3>{{ category }}</h3>
-            <ul id="category-{{ category | lower }}">
-                {% for product in products %}
-                    <li>
-                        {{ product.name }}
-                        <a href="{% url 'configurator' category product.id %}">Select</a>
+    <main class="container">
+        <!-- Selected Components Section -->
+        <section class="selected-components">
+            <h2>Selected Components</h2>
+            <ul class="selected-list">
+                {% for category, selected_product in selected_products.items %}
+                    <li class="selected-item">
+                        <div class="selected-info">
+                            <strong>{{ category }}:</strong>
+                            {% if selected_product %}
+                                <span>{{ selected_product.name }} - {{ selected_product.price }} рублей</span>
+                                {% if selected_product.image %}
+                                    <img src="{{ selected_product.image.url }}" alt="{{ selected_product.name }}" class="product-image">
+                                {% endif %}
+                                <a href="{% url 'configurator' category selected_product.id %}?delete=True" class="btn btn-delete">Remove</a>
+                            {% else %}
+                                <span>No product selected.</span>
+                            {% endif %}
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
-        {% endfor %}
-    </div>
+            <a href="{% url 'order' %}">Заказать</a>
+        </section>
 
+        <!-- Available Components Section -->
+        <section class="available-components">
+            <h2>Available Components</h2>
+            <div class="categories">
+                {% for category, products in available_products.items %}
+                    <div class="category">
+                        <h3>{{ category }}</h3>
+                        <ul class="product-list">
+                            {% for product in products %}
+                                <li class="product-item">
+                                    <div class="product-details">
+                                        <strong>{{ product.name }}</strong>
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                        {% endif %}
+                                        <span class="product-price">{{ product.price }} рублей</span>
+                                        <a href="{% url 'configurator' category product.id %}" class="btn btn-select">Select</a>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <p>No products available in {{ category }}.</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
 
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 PC Configurator. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
-
-
-
