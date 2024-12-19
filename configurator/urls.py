@@ -7,5 +7,6 @@ urlpatterns = [
          ConfiguratorView.as_view(), name='configurator'),
 
     path('', ProductView.as_view(), name='products'),
-    path('order/', OrderComponents.as_view(), name='order'),
+    path('save_build/', SaveMyBuild.as_view(), name='save_build'),
+    path('my_builds/', MyBuilds.as_view(), name='my_builds'),
 ]

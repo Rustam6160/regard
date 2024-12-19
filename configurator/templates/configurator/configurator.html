@@ -36,7 +36,9 @@
                     </li>
                 {% endfor %}
             </ul>
-            <a href="{% url 'order' %}">Заказать</a>
+            <h2>Обшая стоимость = {{ selected_products_price }}</h2>
+            <a href="{% url 'save_build' %}">Сохронить собранный пк</a>
+            <a href="{% url 'my_builds' %}">Посмотреть мои сборки пк</a>
         </section>
 
         <!-- Available Components Section -->

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -16,7 +17,7 @@ class Product(models.Model):
             ('case', 'Case'),
             ('storage', 'Storage'),
             ('os', 'OS'),
-            ('spucooler', 'SPUCooler')
+            ('spucooler', 'CPUCooler')
         ]
     )
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -189,6 +190,19 @@ class CPUCooler(Product):
 
     def __str__(self):
         return self.name
+
+
+class Build(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    cpu = models.ForeignKey(CPU, on_delete=models.SET_NULL, null=True, blank=True)
+    motherboard = models.ForeignKey(Motherboard, on_delete=models.SET_NULL, null=True, blank=True)
+    ram = models.ForeignKey(RAM, on_delete=models.SET_NULL, null=True, blank=True)
+    gpu = models.ForeignKey(GPU, on_delete=models.SET_NULL, null=True, blank=True)
+    psu = models.ForeignKey(PSU, on_delete=models.SET_NULL, null=True, blank=True)
+    case = models.ForeignKey(Case, on_delete=models.SET_NULL, null=True, blank=True)
+    storage = models.ForeignKey(Storage, on_delete=models.SET_NULL, null=True, blank=True)
+    os = models.ForeignKey(OS, on_delete=models.SET_NULL, null=True, blank=True)
+    cpucooler = models.ForeignKey(CPUCooler, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 

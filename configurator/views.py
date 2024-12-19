@@ -44,34 +44,16 @@ class ConfiguratorView(View):
                 del request.session['selected_products'][selected_product_category]
                 request.session.modified = True
 
+
         # Восстановление выбора из сессии
-        selected_products = {
-            'cpu': CPU.objects.get(id=cpu_id) if (
-                cpu_id := request.session.get('selected_products', {}).get('cpu')) else None,
-            'motherboard': Motherboard.objects.get(id=mobo_id) if (
-                mobo_id := request.session.get('selected_products', {}).get('motherboard')) else None,
-            'ram': RAM.objects.get(id=ram_id) if (
-                ram_id := request.session.get('selected_products', {}).get('ram')) else None,
-            'gpu': GPU.objects.get(id=gpu_id) if (
-                gpu_id := request.session.get('selected_products', {}).get('gpu')) else None,
-            'psu': PSU.objects.get(id=psu_id) if (
-                psu_id := request.session.get('selected_products', {}).get('psu')) else None,
-            'case': Case.objects.get(id=case_id) if (
-                case_id := request.session.get('selected_products', {}).get('case')) else None,
-            'storage': Storage.objects.get(id=storage_id) if (
-                storage_id := request.session.get('selected_products', {}).get('storage')) else None,
-            'os': OS.objects.get(id=os_id) if (
-                os_id := request.session.get('selected_products', {}).get('os')) else None,
-            'cpucooler': CPUCooler.objects.get(id=cooler_id) if (
-                cooler_id := request.session.get('selected_products', {}).get('cpucooler')) else None,
-        }
+        selected_products = selected_products_from_session(request)
+
 
 
 
 
         # Добавление нового продукта
         if not delete:
-            print(77)
             if selected_product_id and selected_product_category:
                 model_map = {
                     'cpu': CPU,
@@ -92,6 +74,11 @@ class ConfiguratorView(View):
         request.session['selected_products'] = {
             key: value.id if value else None for key, value in selected_products.items()
         }
+
+        selected_products_price = 0
+        for key, selected_product in selected_products.items():
+            if selected_product:
+                selected_products_price += selected_product.price
 
 
 
@@ -140,34 +127,95 @@ class ConfiguratorView(View):
         return render(request, 'configurator/configurator.html', {
             'available_products': available_products,
             'selected_products': selected_products,
+            'selected_products_price': selected_products_price,
         })
 
 
-class OrderComponents(View):
+class SaveMyBuild(View):
     def get(self, request):
-        selected_products = {
-            'cpu': CPU.objects.get(id=cpu_id) if (
-                cpu_id := request.session.get('selected_products', {}).get('cpu')) else None,
-            'motherboard': Motherboard.objects.get(id=mobo_id) if (
-                mobo_id := request.session.get('selected_products', {}).get('motherboard')) else None,
-            'ram': RAM.objects.get(id=ram_id) if (
-                ram_id := request.session.get('selected_products', {}).get('ram')) else None,
-            'gpu': GPU.objects.get(id=gpu_id) if (
-                gpu_id := request.session.get('selected_products', {}).get('gpu')) else None,
-            'psu': PSU.objects.get(id=psu_id) if (
-                psu_id := request.session.get('selected_products', {}).get('psu')) else None,
-            'case': Case.objects.get(id=case_id) if (
-                case_id := request.session.get('selected_products', {}).get('case')) else None,
-            'storage': Storage.objects.get(id=storage_id) if (
-                storage_id := request.session.get('selected_products', {}).get('storage')) else None,
-            'os': OS.objects.get(id=os_id) if (
-                os_id := request.session.get('selected_products', {}).get('os')) else None,
-            'cpucooler': CPUCooler.objects.get(id=cooler_id) if (
-                cooler_id := request.session.get('selected_products', {}).get('cpucooler')) else None,
-        }
+        selected_products = selected_products_from_session(request)
+        selected_products_price = 0
+        for key, selected_product in selected_products.items():
+            if selected_product:
+                selected_products_price += selected_product.price
 
-        return render(request, 'configurator/order.html', context={"selected_products": selected_products})
+        my_build = Build.objects.create(author=request.user,
+                                        cpu=selected_products['cpu'],
+                                        motherboard=selected_products['motherboard'],
+                                        ram=selected_products['ram'],
+                                        gpu=selected_products['gpu'],
+                                        psu=selected_products['psu'],
+                                        case=selected_products['case'],
+                                        storage=selected_products['storage'],
+                                        os=selected_products['os'],
+                                        cpucooler=selected_products['cpucooler'],
+                                        )
 
+        return redirect('products')
+
+
+class MyBuilds(View):
+    def get(self, request):
+        builds = Build.objects.filter(author=request.user)
+        builds_with_prices = []
+
+        for build in builds:
+            total_price = 0
+            # Суммируем стоимость всех компонентов сборки
+            if build.cpu:
+                total_price += build.cpu.price
+            if build.motherboard:
+                total_price += build.motherboard.price
+            if build.ram:
+                total_price += build.ram.price
+            if build.gpu:
+                total_price += build.gpu.price
+            if build.psu:
+                total_price += build.psu.price
+            if build.case:
+                total_price += build.case.price
+            if build.storage:
+                total_price += build.storage.price
+            if build.os:
+                total_price += build.os.price
+            if build.cpucooler:
+                total_price += build.cpucooler.price
+
+            # Добавляем сборку и её стоимость в список
+            builds_with_prices.append({
+                'build': build,
+                'total_price': total_price
+            })
+
+        # Передаём в шаблон список сборок и их стоимость
+        return render(request, 'configurator/my_build.html', context={'builds_with_prices': builds_with_prices})
+
+
+
+
+def selected_products_from_session(request):
+    selected_products = {
+        'cpu': CPU.objects.get(id=cpu_id) if (
+            cpu_id := request.session.get('selected_products', {}).get('cpu')) else None,
+        'motherboard': Motherboard.objects.get(id=mobo_id) if (
+            mobo_id := request.session.get('selected_products', {}).get('motherboard')) else None,
+        'ram': RAM.objects.get(id=ram_id) if (
+            ram_id := request.session.get('selected_products', {}).get('ram')) else None,
+        'gpu': GPU.objects.get(id=gpu_id) if (
+            gpu_id := request.session.get('selected_products', {}).get('gpu')) else None,
+        'psu': PSU.objects.get(id=psu_id) if (
+            psu_id := request.session.get('selected_products', {}).get('psu')) else None,
+        'case': Case.objects.get(id=case_id) if (
+            case_id := request.session.get('selected_products', {}).get('case')) else None,
+        'storage': Storage.objects.get(id=storage_id) if (
+            storage_id := request.session.get('selected_products', {}).get('storage')) else None,
+        'os': OS.objects.get(id=os_id) if (
+            os_id := request.session.get('selected_products', {}).get('os')) else None,
+        'cpucooler': CPUCooler.objects.get(id=cooler_id) if (
+            cooler_id := request.session.get('selected_products', {}).get('cpucooler')) else None,
+    }
+
+    return selected_products
 
 
 
