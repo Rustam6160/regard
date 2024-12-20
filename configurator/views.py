@@ -27,49 +27,102 @@ class ProductView(View):
 
 
 # def match_selected_product(request, selected_product_category, selected_product_id):
+#     # Получаем выбранные продукты из сессии
 #     selected_products = selected_products_from_session(request)
 #
+#     # Функция для проверки совместимости CPU
+#     def check_cpu_compatibility(selected_cpu, current_cpu):
+#         return selected_cpu.socket == current_cpu.socket
+#
+#     # Функция для проверки совместимости материнской платы
+#     def check_motherboard_compatibility(selected_motherboard, cpu, ram, gpu, case):
+#         supported_sizes = selected_motherboard.form_factor.split(', ')
+#         return (
+#                 selected_motherboard.socket == cpu.socket and
+#                 selected_motherboard.ram_type == ram.memory_type and
+#                 selected_motherboard.pcie_version == gpu.interface and
+#                 case.form_factor_support in supported_sizes
+#         )
+#
+#     # Функция для проверки совместимости оперативной памяти
+#     def check_ram_compatibility(selected_ram, motherboard):
+#         return motherboard.ram_type == selected_ram.memory_type
+#
+#     # Функция для проверки совместимости видеокарты
+#     def check_gpu_compatibility(selected_gpu, motherboard, psu, case):
+#         return (
+#                 selected_gpu.interface == motherboard.pcie_version and
+#                 psu.pcie_connectors >= selected_gpu.required_pcie_connectors and
+#                 selected_gpu.dimensions_mm <= case.max_gpu_length_mm
+#         )
+#
+#     # Функция для проверки совместимости корпуса
+#     def check_case_compatibility(selected_case, motherboard, gpu):
+#         supported_sizes = selected_case.form_factor_support.split(', ')
+#         return (
+#                 gpu.dimensions_mm <= selected_case.max_gpu_length_mm and
+#                 motherboard.form_factor in supported_sizes
+#         )
+#
+#     # Функция для проверки совместимости блока питания
+#     def check_psu_compatibility(selected_psu, gpu):
+#         return (
+#                 selected_psu.power >= gpu.recommended_psu_power
+#                 # selected_psu.pcie_connectors >= gpu.required_pcie_connectors
+#         )
+#
+#     # Пытаемся получить все необходимые компоненты
+#     try:
+#         cpu = CPU.objects.get(id=selected_products.get('cpu'))
+#         motherboard = Motherboard.objects.get(id=selected_products.get('motherboard'))
+#         ram = RAM.objects.get(id=selected_products.get('ram'))
+#         gpu = GPU.objects.get(id=selected_products.get('gpu'))
+#         case = Case.objects.get(id=selected_products.get('case'))
+#         psu = PSU.objects.get(id=selected_products.get('psu'))
+#     except (CPU.DoesNotExist, Motherboard.DoesNotExist, RAM.DoesNotExist,
+#             GPU.DoesNotExist, Case.DoesNotExist, PSU.DoesNotExist):
+#         return False
+#
+#     # Проверяем совместимость выбранного продукта в зависимости от категории
 #     if selected_product_category == 'cpu':
-#         selected_product = CPU.objects.get(id=selected_product_id)
-#         first_selected_product = CPU.objects.get(id=selected_products['cpu'])
-#         if selected_product.socket == first_selected_product:
-#             return True
+#         selected_cpu = CPU.objects.filter(id=selected_product_id).first()
+#         return selected_cpu and check_cpu_compatibility(selected_cpu, cpu)
+#
 #     elif selected_product_category == 'motherboard':
-#         selected_product = Motherboard.objects.get(id=selected_product_id)
-#         first_selected_product = Motherboard.objects.get(id=selected_products['motherboard'])
-#         if selected_product.socket == first_selected_product and selected_product.ram_type ==
-#             :
-#             return True
+#         selected_motherboard = Motherboard.objects.filter(id=selected_product_id).first()
+#         return selected_motherboard and check_motherboard_compatibility(
+#             selected_motherboard, cpu, ram, gpu, case
+#         )
 #
+#     elif selected_product_category == 'ram':
+#         selected_ram = RAM.objects.filter(id=selected_product_id).first()
+#         return selected_ram and check_ram_compatibility(selected_ram, motherboard)
 #
-#         motherboard = selected_products['motherboard']
-#         available_products['cpu'] = available_products['cpu'].filter(socket=motherboard.socket)
-#         available_products['ram'] = available_products['ram'].filter(memory_type=motherboard.ram_type)
-#         available_products['gpu'] = available_products['gpu'].filter(interface=motherboard.pcie_version)
-#         available_products['case'] = available_products['case'].filter(
-#             form_factor_support__icontains=motherboard.form_factor)
-#     if selected_products['ram']:
-#         ram = selected_products['ram']
-#         available_products['motherboard'] = available_products['motherboard'].filter(ram_type=ram.memory_type)
-#     if selected_products['gpu']:
-#         gpu = selected_products['gpu']
-#         available_products['motherboard'] = available_products['motherboard'].filter(pcie_version=gpu.interface)
-#         available_products['psu'] = available_products['psu'].filter(pcie_connectors__gte=1)
-#         available_products['case'] = available_products['case'].filter(max_gpu_length_mm__gte=gpu.dimensions_mm)
-#     if selected_products['case']:
-#         case = selected_products['case']
-#         available_products['gpu'] = available_products['gpu'].filter(dimensions_mm__lte=case.max_gpu_length_mm)
-#         supported_sizes = case.form_factor_support.split(', ')
-#         available_products['motherboard'] = available_products['motherboard'].filter(
-#             form_factor__in=supported_sizes)
-#     if selected_products['psu']:
-#         psu = selected_products['psu']
-#         available_products['gpu'] = available_products['gpu'].filter(additional_power_needed=True)
+#     elif selected_product_category == 'gpu':
+#         selected_gpu = GPU.objects.filter(id=selected_product_id).first()
+#         return selected_gpu and check_gpu_compatibility(selected_gpu, motherboard, psu, case)
+#
+#     elif selected_product_category == 'case':
+#         selected_case = Case.objects.filter(id=selected_product_id).first()
+#         return selected_case and check_case_compatibility(selected_case, motherboard, gpu)
+#
+#     elif selected_product_category == 'psu':
+#         selected_psu = PSU.objects.filter(id=selected_product_id).first()
+#         return selected_psu and check_psu_compatibility(selected_psu, gpu)
+#
+#     return False
+
 
 
 class ConfiguratorView(View):
     def get(self, request, selected_product_category=None, selected_product_id=None):
         delete = request.GET.get('delete')
+        clear = request.GET.get('clear')
+
+        if clear:
+            del request.session['selected_products']
+            request.session.modified = True
+
         if delete:
             print(f"Удаление продукта с категорией: {selected_product_category}")
             print(f"Текущие выбранные продукты: {request.session.get('selected_products', {})}")

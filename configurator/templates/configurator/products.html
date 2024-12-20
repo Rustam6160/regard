@@ -14,7 +14,7 @@
                     {% for item in items %}
                         <li>
                             {{ item.name }}
-                            <a href="{% url 'configurator' category item.id %}">Выбрать для конфигурации</a>
+                            <a href="{% url 'configurator' category item.id %}?clear=True">Начать конфигурацию</a>
                         </li>
                     {% endfor %}
                 </ul>
