@@ -5,64 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Builds</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .builds-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .build {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .build h2 {
-            margin: 0 0 10px;
-            color: #444;
-        }
-        .build p {
-            margin: 5px 0;
-        }
-        .component {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .component img {
-            max-width: 80px;
-            margin-right: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .total-price {
-            font-weight: bold;
-            color: #007BFF;
-            font-size: 1.2em;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'configurator/css/my_build.css' %}">
+
 </head>
 <body>
     <h1>Мои сборки</h1>
     <div class="builds-container">
         {% for item in builds_with_prices %}
             <div class="build">
-                <h2>Build ID: {{ item.build.id }}</h2>
                 <div class="total-price">Total Price: {{ item.total_price }}</div>
                 {% if item.build.cpu %}
                     <div class="component">
@@ -118,8 +68,10 @@
                         <p>CPU Cooler: {{ item.build.cpucooler.name }} ({{ item.build.cpucooler.price }})</p>
                     </div>
                 {% endif %}
+                <a href="{% url 'delete_build' item.build.id %}">Удалить</a>
             </div>
         {% endfor %}
+        <a href="{% url 'products' %}">Магазин</a>
     </div>
 </body>
 </html>
