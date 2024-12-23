@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Products</title>
-</head>
-<body>
+{% extends 'core/base.html' %}
+{% load static %}
+
+    {% block title %}Products{% endblock %}
+    {% block css %}{% endblock %}
+{% block content %}
     <h2>Доступные категории и товары:</h2>
     <div class="categories">
         {% for category, items in items.items %}
@@ -24,3 +23,4 @@
     <a href="{% url 'my_builds' %}">Посмотреть мои сборки пк</a>
 </body>
 </html>
+{% endblock %}

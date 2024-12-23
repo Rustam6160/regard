@@ -1,14 +1,9 @@
+{% extends 'core/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Builds</title>
-    <link rel="stylesheet" href="{% static 'configurator/css/my_build.css' %}">
 
-</head>
-<body>
+    {% block title %}My builds{% endblock %}
+    {% block css %}<link rel="stylesheet" href="{% static 'configurator/css/my_build.css' %}"> {% endblock %}
+{% block content %}
     <h1>Мои сборки</h1>
     <div class="builds-container">
         {% for item in builds_with_prices %}
@@ -73,5 +68,5 @@
         {% endfor %}
         <a href="{% url 'products' %}">Магазин</a>
     </div>
-</body>
-</html>
+{% endblock %}
+

@@ -6,7 +6,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('configurator.urls')),
+    path('', include('core.urls')),
+    path('configurator/', include('configurator.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Поддержка медиа-файлов в режиме разработки
