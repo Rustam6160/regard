@@ -1,74 +1,77 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-    {% block title %}PC Configurator{% endblock %}
-    {% block css %}<link rel="stylesheet" href="{% static 'configurator/css/configurator.css' %}">{% endblock %}
-{% block content %}
-    <header class="header">
-        <div class="container">
-            <h1>PC Configurator</h1>
-        </div>
-    </header>
-
-    <main class="container">
-        <!-- Selected Components Section -->
-        <section class="selected-components">
-            <h2>Selected Components</h2>
-            <ul class="selected-list">
-                {% for category, selected_product in selected_products.items %}
-                    <li class="selected-item">
-                        <div class="selected-info">
-                            <strong>{{ category }}:</strong>
-                            {% if selected_product %}
-                                <span>{{ selected_product.name }} - {{ selected_product.price }} рублей</span>
-                                {% if selected_product.image %}
-                                    <img src="{{ selected_product.image.url }}" alt="{{ selected_product.name }}" class="product-image">
-                                {% endif %}
-                                <a href="{% url 'configurator' category selected_product.id %}?delete=True" class="btn btn-delete">Remove</a>
-                            {% else %}
-                                <span>No product selected.</span>
-                            {% endif %}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-            <h2>Обшая стоимость = {{ selected_products_price }}</h2>
-            <a href="{% url 'save_build' %}">Сохронить собранный пк</a>
-            <a href="{% url 'my_builds' %}">Посмотреть мои сборки пк</a>
-        </section>
-
-        <!-- Available Components Section -->
-        <section class="available-components">
-            <h2>Available Components</h2>
-            <div class="categories">
-                {% for category, products in available_products.items %}
-                    <div class="category">
-                        <h3>{{ category }}</h3>
-                        <ul class="product-list">
-                            {% for product in products %}
-                                <li class="product-item">
-                                    <div class="product-details">
-                                        <strong>{{ product.name }}</strong>
-                                        {% if product.image %}
-                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-                                        {% endif %}
-                                        <span class="product-price">{{ product.price }} рублей</span>
-                                        <a href="{% url 'configurator' category product.id %}" class="btn btn-select">Select</a>
-                                    </div>
-                                </li>
-                            {% empty %}
-                                <p>No products available in {{ category }}.</p>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 PC Configurator. All rights reserved.</p>
-        </div>
-    </footer>
+{% block title %}PC Configurator{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'configurator/css/configurator.css' %}">
 {% endblock %}
+{% block content %}
+<header class="header">
+    <div class="container">
+        <h1>PC Configurator</h1>
+    </div>
+</header>
+
+<main class="container">
+    <!-- Selected Components Section -->
+    <section class="selected-components" id="selected-components">
+        <h2>Selected Components</h2>
+        <ul class="selected-list">
+            {% for category, selected_product in selected_products.items %}
+                <li class="selected-item" data-category="{{ category }}">
+                    <div class="selected-info">
+                        <strong>{{ category }}:</strong>
+                        {% if selected_product %}
+                            <span>{{ selected_product.name }} - {{ selected_product.price }} рублей</span>
+                            {% if selected_product.image %}
+                                <img src="{{ selected_product.image.url }}" alt="{{ selected_product.name }}" class="product-image">
+                            {% endif %}
+                            <button class="btn btn-delete" data-category="{{ category }}" data-id="{{ selected_product.id }}">Remove</button>
+                        {% else %}
+                            <span>Drop a product here</span>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Обшая стоимость = {{ selected_products_price }}</h2>
+        <a href="{% url 'save_build' %}">Сохронить собранный пк</a>
+        <a href="{% url 'my_builds' %}">Посмотреть мои сборки пк</a>
+    </section>
+
+    <!-- Available Components Section -->
+    <section class="available-components">
+        <h2>Available Components</h2>
+        <div class="categories">
+            {% for category, products in available_products.items %}
+                <div class="category">
+                    <h3>{{ category }}</h3>
+                    <ul class="product-list">
+                        {% for product in products %}
+                            <li class="product-item" draggable="true" data-id="{{ product.id }}" data-category="{{ category }}">
+                                <div class="product-details">
+                                    <strong>{{ product.name }}</strong>
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                    {% endif %}
+                                    <span class="product-price">{{ product.price }} рублей</span>
+                                </div>
+                            </li>
+                        {% empty %}
+                            <p>No products available in {{ category }}.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 PC Configurator. All rights reserved.</p>
+    </div>
+</footer>
+<script src="{% static 'configurator/js/drag_and_drop.js' %}"></script>
+{% endblock %}
+

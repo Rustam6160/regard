@@ -16,7 +16,10 @@
 {#                <li><a href="{% url 'home' %}">Home</a></li>#}
                 <li><a href="{% url 'my_builds' %}">My Builds</a></li>
                 <li><a href="{% url 'products' %}">Products</a></li>
-{#                <li><a href="{% url 'logout' %}">Logout</a></li>#}
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% if request.user.is_superuser %}
+                    blvhj
+                {% endif %}
             </ul>
         </nav>
     </header>

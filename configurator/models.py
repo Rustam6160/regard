@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from accounts.models import CustomUser
 
 
 
@@ -52,8 +52,8 @@ class Motherboard(Product):
     max_ram = models.IntegerField(verbose_name="Максимальный объем ОЗУ, ГБ", default=128)
     ram_slots = models.IntegerField(verbose_name="Количество слотов ОЗУ", default=4)
     form_factor = models.CharField(max_length=50, verbose_name="Форм-фактор", default="ATX")
-    m2_slots = models.IntegerField(verbose_name="Количество слотов M.2", default=2)
-    sata_ports = models.IntegerField(verbose_name="Количество SATA портов", default=4)
+    m2_slots = models.IntegerField(verbose_name="Количество слотов M.2", null=True, blank=True)
+    sata_ports = models.IntegerField(verbose_name="Количество SATA портов", null=True, blank=True)
     pcie_version = models.CharField(max_length=50, verbose_name="Версия PCIe", default="PCI Express 4.0")
     image = models.ImageField(upload_to='images/motherboards/', null=True, blank=True, verbose_name="Фото материнской платы")
 
@@ -83,7 +83,7 @@ class GPU(Product):
     interface = models.CharField(max_length=50, verbose_name="Интерфейс", default="PCI Express 4.0")
     manufacturer_gpu = models.CharField(max_length=100, verbose_name="Производитель видеопроцессора", default="unknown")
     series = models.CharField(max_length=50, verbose_name="Серия", default="unknown")
-    memory_size = models.IntegerField(verbose_name="Объём памяти", default=8)
+    memory_size = models.IntegerField(verbose_name="Объём памяти мб", default=8000)
     memory_type = models.CharField(max_length=50, verbose_name="Тип памяти", default="GDDR6")
     memory_bus = models.IntegerField(verbose_name="Шина памяти (разрядность)", default=128)
     dimensions_mm = models.IntegerField(verbose_name="Шырина (длина) мм", default=199)
@@ -129,15 +129,15 @@ class Case(Product):
     max_cpu_cooler_height_mm = models.IntegerField(verbose_name="Максимальная высота кулера, мм", default=163)
     form_factor_support = models.CharField(max_length=100, verbose_name="Поддерживаемые форм-факторы материнских плат", default="ATX, mATX, Mini-ITX")
     psu_type = models.CharField(max_length=50, verbose_name="Тип блока питания (например, ATX, SFX)", default="без БП")
-    drive_bays = models.CharField(max_length=100, verbose_name="Отсеки для накопителей (например, 2x3.5', 2x2.5')", default="2.5\" - 2, 3.5\" - 2")
+    drive_bays = models.CharField(max_length=100, verbose_name="Отсеки для накопителей (например, 2x3.5', 2x2.5')", null=True, blank=True)
     fan_slots = models.BooleanField(verbose_name="Места для вентиляторов", default=True)
-    bottom_fans = models.CharField(max_length=50, verbose_name="Вентиляторы на нижней панели", default="2 x 120 мм")
-    top_fans = models.CharField(max_length=50, verbose_name="Вентиляторы на верхней панели", default="2 x 120 мм")
+    bottom_fans = models.CharField(max_length=50, verbose_name="Вентиляторы на нижней панели", null=True, blank=True)
+    top_fans = models.CharField(max_length=50, verbose_name="Вентиляторы на верхней панели", null=True, blank=True)
     rgb_lighting = models.BooleanField(verbose_name="Подсветка корпуса", default=True)
     liquid_cooling_support = models.BooleanField(verbose_name="Возможность установки СЖО", default=True)
     dimensions = models.CharField(max_length=50, verbose_name="Размеры (ШхВхГ)", default="204 x 446 x 396 мм")
-    weight_kg = models.FloatField(verbose_name="Вес", default=4.7)
-    warranty = models.IntegerField(verbose_name="Гарантия (мес.)", default=12)
+    weight_kg = models.FloatField(verbose_name="Вес", null=True, blank=True)
+    warranty = models.IntegerField(verbose_name="Гарантия (мес.)", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -193,7 +193,7 @@ class CPUCooler(Product):
 
 
 class Build(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cpu = models.ForeignKey(CPU, on_delete=models.SET_NULL, null=True, blank=True)
     motherboard = models.ForeignKey(Motherboard, on_delete=models.SET_NULL, null=True, blank=True)
     ram = models.ForeignKey(RAM, on_delete=models.SET_NULL, null=True, blank=True)
@@ -206,3 +206,88 @@ class Build(models.Model):
 
 
 
+
+
+
+
+
+
+#
+# # Модель кузова автомобиля
+# class Body(models.Model):
+#     TYPE_CHOICES = [
+#         ('sedan', 'Седан'),
+#         ('hatchback', 'Хэтчбек'),
+#         ('suv', 'Внедорожник'),
+#         ('wagon', 'Универсал'),
+#     ]
+#     type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name="Тип кузова")
+#     color = models.CharField(max_length=50, verbose_name="Цвет кузова")
+#     material = models.CharField(max_length=50, verbose_name="Материал кузова")
+#
+#     def __str__(self):
+#         return f"{self.get_type_display()} ({self.color})"
+#
+# # Модель двигателя
+# class Engine(models.Model):
+#     TYPE_CHOICES = [
+#         ('petrol', 'Бензиновый'),
+#         ('diesel', 'Дизельный'),
+#         ('electric', 'Электрический'),
+#         ('hybrid', 'Гибридный'),
+#     ]
+#     type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name="Тип двигателя")
+#     volume = models.FloatField(verbose_name="Объем (л)")
+#     power = models.IntegerField(verbose_name="Мощность (л.с.)")
+#
+#     def __str__(self):
+#         return f"{self.get_type_display()} - {self.power} л.с."
+#
+# # Модель колес
+# class Wheel(models.Model):
+#     TYPE_CHOICES = [
+#         ('alloy', 'Литые'),
+#         ('steel', 'Штампованные'),
+#         ('forged', 'Кованые'),
+#     ]
+#     type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name="Тип колес")
+#     diameter = models.IntegerField(verbose_name="Диаметр (дюймы)")
+#     width = models.IntegerField(verbose_name="Ширина (мм)")
+#     brand = models.CharField(max_length=50, verbose_name="Производитель шин")
+#
+#     def __str__(self):
+#         return f"{self.get_type_display()} - {self.diameter}" дюймов
+#
+# # Модель интерьера
+# class Interior(models.Model):
+#     MATERIAL_CHOICES = [
+#         ('fabric', 'Ткань'),
+#         ('leather', 'Кожа'),
+#         ('eco_leather', 'Экокожа'),
+#     ]
+#     material = models.CharField(max_length=20, choices=MATERIAL_CHOICES, verbose_name="Материал обивки")
+#     color = models.CharField(max_length=50, verbose_name="Цвет салона")
+#     package = models.CharField(max_length=50, verbose_name="Комплектация")
+#
+#     def __str__(self):
+#         return f"{self.get_material_display()} ({self.color})"
+#
+# # Модель дополнительных опций
+# class AdditionalFeature(models.Model):
+#     name = models.CharField(max_length=100, verbose_name="Название опции")
+#     description = models.TextField(verbose_name="Описание", blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.name
+#
+# # Модель автомобиля
+# class Car(models.Model):
+#     name = models.CharField(max_length=100, verbose_name="Модель автомобиля")
+#     body = models.ForeignKey(Body, on_delete=models.CASCADE, verbose_name="Кузов")
+#     engine = models.ForeignKey(Engine, on_delete=models.CASCADE, verbose_name="Двигатель")
+#     wheels = models.ForeignKey(Wheel, on_delete=models.CASCADE, verbose_name="Колеса")
+#     interior = models.ForeignKey(Interior, on_delete=models.CASCADE, verbose_name="Интерьер")
+#     additional_features = models.ManyToManyField(AdditionalFeature, blank=True, verbose_name="Дополнительные опции")
+#
+#     def __str__(self):
+#         return self.name

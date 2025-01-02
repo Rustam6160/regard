@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.views import View
 from django.views.generic import TemplateView, ListView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 
@@ -16,8 +18,9 @@ class ConfiguratorView(View):
         clear = request.GET.get('clear')
 
         if clear:
-            del request.session['selected_products']
-            request.session.modified = True
+            if request.session.get('selected_products'):
+                del request.session['selected_products']
+                request.session.modified=True
 
         if delete:
             print(f"Удаление продукта с категорией: {selected_product_category}")
@@ -106,7 +109,7 @@ class ConfiguratorView(View):
             'selected_products_price': selected_products_price,
         })
 
-
+@method_decorator(login_required, name='dispatch')
 class SaveMyBuild(View):
     def get(self, request):
         selected_products = selected_products_from_session(request)
@@ -128,6 +131,7 @@ class SaveMyBuild(View):
         return redirect('my_builds')
 
 
+@method_decorator(login_required, name='dispatch')
 class MyBuilds(View):
     def get(self, request):
         builds = Build.objects.filter(author=request.user)

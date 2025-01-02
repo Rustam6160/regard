@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'configurator',
     'core',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+LOGIN_URL = 'login'  # Перенаправление на вход, если пользователь не авторизован
+LOGIN_REDIRECT_URL = 'products'  # Перенаправление после входа
