@@ -11,7 +11,7 @@ body {
 .container {
     width: 95%;
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 0 100px 0 0;
     padding: 10px;
 }
 
@@ -141,6 +141,60 @@ header.header h1 {
     background: #c82333;
 }
 
+
+
+.conf_box{
+    background-color: rgba(181, 179, 179, 0.34);
+    width: 250px;
+    height: 250px;
+    position: fixed;
+    top: 150px;
+    right: 30px;
+}
+.conf_box img {
+    width: inherit;
+    position: absolute;
+    transition: box-shadow 0.3s ease;
+}
+.conf_box img:hover {
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
+}
+#case {
+    z-index: -1;
+}
+#gpu {
+    width: 100px;
+    z-index: 2;
+    top: 120px;
+    left: 40px;
+}
+#motherboard {
+    width: 100px;
+    z-index: 1;
+    top: 50px;
+    left: 35px;
+}
+#ram {
+    width: 15px;
+    z-index: 2;
+    top: 53px;
+    left: 107px;
+}
+#cpu {
+    width: 15px;
+    z-index: 2;
+    top: 80px;
+    left: 80px;
+}
+#psu {
+    width: 60px;
+    z-index: 2;
+    top: 185px;
+    left: 37px;
+}
+
+
+
 /* Footer */
 footer.footer {
     background: #f0f2f5;
@@ -150,3 +204,5 @@ footer.footer {
     border-top: 1px solid #ddd;
     font-size: 0.9rem;
 }
+
+

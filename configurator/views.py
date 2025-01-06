@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+from .forms import *
 
 
 
@@ -101,13 +101,14 @@ class ConfiguratorView(View):
                 form_factor__in=supported_sizes)
         if selected_products['psu']:
             psu = selected_products['psu']
-            available_products['gpu'] = available_products['gpu'].filter(additional_power_needed=True)
+            available_products['gpu'] = available_products['gpu'].filter(recommended_psu_power__lt=psu.power)
 
         return render(request, 'configurator/configurator.html', {
             'available_products': available_products,
             'selected_products': selected_products,
             'selected_products_price': selected_products_price,
         })
+
 
 @method_decorator(login_required, name='dispatch')
 class SaveMyBuild(View):
@@ -156,6 +157,34 @@ class MyBuilds(View):
 
         # Передаём в шаблон список сборок и их стоимость
         return render(request, 'configurator/my_build.html', context={'builds_with_prices': builds_with_prices})
+
+
+class EditProducts(View):
+    def get(self, request):
+        return render(request, 'configurator/edit_products.html')
+
+class AddProduct(View):
+    def get(self, request, product_category):
+        form_classes = {
+            'cpu': AddCPUForm,
+            'gpu': AddGPUForm,
+            'case': AddCaseForm,
+            'ram': AddRAMForm,
+            'psu': AddPSUForm,
+        }
+
+        form = form_classes.get(product_category, lambda: None)()
+
+        return render(request, 'configurator/add_product.html', context={'form': form})
+
+    def post(self, request, product_category):
+        form = AddCPUForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('edit_products')
+        else:
+            messages.error(request, 'Произошла ошибка добовления.')
+            return redirect('edit_products')
 
 
 def delete_build(request, build_id):

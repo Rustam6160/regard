@@ -66,6 +66,13 @@
         </div>
     </section>
 </main>
+<div class="conf_box">
+    {% for category, selected_product in selected_products.items %}
+        {% if selected_product %}
+            <img id="{{ selected_product.type }}" src="{% static 'configurator/images/' %}{{selected_product.type}}.png">
+        {% endif %}
+    {% endfor %}
+</div>
 
 <footer class="footer">
     <div class="container">
