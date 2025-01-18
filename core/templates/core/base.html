@@ -25,10 +25,16 @@
 {#                <li><a href="{% url 'home' %}">Home</a></li>#}
                 <li><a href="{% url 'my_builds' %}">My Builds</a></li>
                 <li><a href="{% url 'products' %}">Products</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'logout' %}">Login</a></li>
+                {% endif %}
                 {% if request.user.is_superuser %}
                     <a href="{% url 'edit_products' %}">Добавить продукт</a>
                 {% endif %}
+                <li><a href="{% url 'favorites_view' %}">Избранные</a></li>
+                <li><a href="{% url 'cart_view' %}">Корзина</a></li>
             </ul>
         </nav>
     </header>

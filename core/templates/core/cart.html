@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cart{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'core/css/products.css' %}"> {% endblock %}
+
+{% block content %}
+    <h1>Корзина</h1>
+    <ul>
+        {% for item in items %}
+            <li>
+                {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }} = {{ item.get_total_price }}
+                <a href="{% url 'remove_from_cart' item.product.id %}">Удалить</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <p>Итоговая сумма: {{ total_price }}</p>
+
+
+
+{% endblock %}

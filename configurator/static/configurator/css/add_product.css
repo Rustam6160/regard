@@ -1,0 +1,66 @@
+/* Основной стиль для страницы */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Стили для формы */
+form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для элементов формы */
+form input[type="text"],
+form input[type="email"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Стили для кнопки отправки */
+form button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для токена CSRF */
+form input[name="csrfmiddlewaretoken"] {
+    display: none;
+}
+
+/* Центрирование формы на экране */
+@media (max-width: 600px) {
+    form {
+        padding: 15px;
+    }
+
+    form button[type="submit"] {
+        font-size: 14px;
+    }
+}

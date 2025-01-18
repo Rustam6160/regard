@@ -59,7 +59,7 @@ class ConfiguratorView(View):
         selected_products_price = 0
         for key, selected_product in selected_products.items():
             if selected_product:
-                selected_products_price += selected_product.price
+                selected_products_price += selected_product.product.price
 
         # Получение доступных продуктов и фильтрация
         available_products = {
@@ -117,7 +117,7 @@ class SaveMyBuild(View):
         selected_products_price = 0
         for key, selected_product in selected_products.items():
             if selected_product:
-                selected_products_price += selected_product.price
+                selected_products_price += selected_product.product.price
 
         Build.objects.create(author=request.user, cpu=selected_products['cpu'],
                              motherboard=selected_products['motherboard'],
@@ -147,7 +147,7 @@ class MyBuilds(View):
             ]
 
             # Суммируем цены всех компонент, если они существуют
-            total_price = sum(component.price for component in components if component)
+            total_price = sum(component.product.price for component in components if component)
 
             # Добавляем сборку и её стоимость в список
             builds_with_prices.append({
@@ -171,19 +171,41 @@ class AddProduct(View):
             'case': AddCaseForm,
             'ram': AddRAMForm,
             'psu': AddPSUForm,
+            'cpucooler': AddCPUCoolerForm,
         }
 
         form = form_classes.get(product_category, lambda: None)()
 
         return render(request, 'configurator/add_product.html', context={'form': form})
 
+
     def post(self, request, product_category):
-        form = AddCPUForm(request.POST)
+        form_classes = {
+            'cpu': AddCPUForm,
+            'gpu': AddGPUForm,
+            'case': AddCaseForm,
+            'ram': AddRAMForm,
+            'psu': AddPSUForm,
+            'cpucooler': AddCPUCoolerForm,
+        }
+
+        # Получаем класс формы из словаря или None
+        form_class = form_classes.get(product_category)
+
+        if not form_class:
+            messages.error(request, 'Неверная категория продукта.')
+            return redirect('edit_products')
+
+        # Инициализируем форму
+        form = form_class(request.POST, request.FILES or None)
+
         if form.is_valid():
             form.save()
+            messages.success(request, 'Продукт успешно добавлен.')
             return redirect('edit_products')
         else:
-            messages.error(request, 'Произошла ошибка добовления.')
+            print(form.errors)
+            messages.error(request, 'Произошла ошибка добавления.')
             return redirect('edit_products')
 
 

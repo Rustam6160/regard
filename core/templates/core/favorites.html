@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Wishlist{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'core/css/products.css' %}"> {% endblock %}
+
+{% block content %}
+    <h1>Избранное</h1>
+    <ul>
+        {% for product in favorites %}
+            <li>
+                {{ product.name }} - {{ product.price }}
+                <a href="{% url 'remove_from_favorites' product.id %}">Удалить из избранного</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+
+{% endblock %}

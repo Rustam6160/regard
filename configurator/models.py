@@ -17,17 +17,27 @@ class Product(models.Model):
             ('case', 'Case'),
             ('storage', 'Storage'),
             ('os', 'OS'),
-            ('spucooler', 'CPUCooler')
+            ('сpucooler', 'CPUCooler')
         ]
     )
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    class Meta:
-        abstract = True
+
+class AutoCreateProductMixin:
+    PRODUCT_TYPE = None  # Переопределяй в дочерних классах
+
+    def save(self, *args, **kwargs):
+        if not self.product_id:  # Если у объекта ещё нет связанного Product
+            if not self.PRODUCT_TYPE:
+                raise ValueError("PRODUCT_TYPE должен быть задан в дочернем классе.")
+            product = Product.objects.create(type=self.PRODUCT_TYPE)
+            self.product = product
+        super().save(*args, **kwargs)
+
 
 
 # Модель для процессоров (CPU)
-class CPU(Product):
+class CPU(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название процессора")
     image = models.ImageField(upload_to='images/CPU/', null=True, blank=True, verbose_name="Фото CPU")
     manufacturer = models.CharField(max_length=100, verbose_name="Производитель", default="Intel")
@@ -39,12 +49,14 @@ class CPU(Product):
     turbo_clock = models.FloatField(verbose_name="Частота процессора в режиме Turbo", null=True, blank=True)
     tdp = models.IntegerField(verbose_name="Типичное тепловыделение", null=True, blank=True)
     release_date = models.CharField(max_length=50, verbose_name="Дата релиза", null=True, blank=True)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="cpu")
+    PRODUCT_TYPE = 'cpu'
 
     def __str__(self):
         return self.name
 
 # Модель для материнских плат (Motherboard)
-class Motherboard(Product):
+class Motherboard(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название материнской платы")
     socket = models.CharField(max_length=50, verbose_name="Сокет", default="LGA 1700")
     chipset = models.CharField(max_length=50, verbose_name="Чипсет", default="Intel B760")
@@ -56,12 +68,14 @@ class Motherboard(Product):
     sata_ports = models.IntegerField(verbose_name="Количество SATA портов", null=True, blank=True)
     pcie_version = models.CharField(max_length=50, verbose_name="Версия PCIe", default="PCI Express 4.0")
     image = models.ImageField(upload_to='images/motherboards/', null=True, blank=True, verbose_name="Фото материнской платы")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="motherboard")
+    PRODUCT_TYPE = 'motherboard'
 
     def __str__(self):
         return self.name
 
 # Модель для оперативной памяти (RAM)
-class RAM(Product):
+class RAM(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название ОЗУ")
     form_factor = models.CharField(max_length=50, verbose_name="Форм-фактор", default="DIMM")
     memory_type = models.CharField(max_length=50, verbose_name="Тип ОЗУ", default="DDR4")
@@ -73,12 +87,14 @@ class RAM(Product):
     voltage = models.FloatField(verbose_name="Напряжение питания, В", default=1.35)
     xmp_support = models.BooleanField(verbose_name="Поддержка XMP", default=True)
     image = models.ImageField(upload_to='images/ram/', null=True, blank=True, verbose_name="Фото ОЗУ")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="ram")
+    PRODUCT_TYPE = 'ram'
 
     def __str__(self):
         return self.name
 
 # Модель для видеокарт (GPU)
-class GPU(Product):
+class GPU(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название видеокарты")
     interface = models.CharField(max_length=50, verbose_name="Интерфейс", default="PCI Express 4.0")
     manufacturer_gpu = models.CharField(max_length=100, verbose_name="Производитель видеопроцессора", default="unknown")
@@ -93,12 +109,14 @@ class GPU(Product):
     recommended_psu_power = models.IntegerField(verbose_name="Рекомендуемая мощность блока питания", default=550)
     tgp = models.IntegerField(verbose_name="TGP", default=115)
     image = models.ImageField(upload_to='images/gpu/', null=True, blank=True, verbose_name="Фото видеокарты")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="gpu")
+    PRODUCT_TYPE = 'gpu'
 
     def __str__(self):
         return self.name
 
 # Модель для блоков питания (PSU)
-class PSU(Product):
+class PSU(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название блока питания")
     power = models.IntegerField(verbose_name="Мощность, Вт", default=750)
     efficiency_rating = models.CharField(max_length=50, verbose_name="Коэффициент эффективности", default="Standard")
@@ -115,12 +133,14 @@ class PSU(Product):
     )
     pcie_connectors = models.IntegerField(verbose_name="Количество разъемов PCIe", default=4)
     image = models.ImageField(upload_to='images/psu/', null=True, blank=True, verbose_name="Фото блока питания")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="psu")
+    PRODUCT_TYPE = 'psu'
 
     def __str__(self):
         return self.name
 
 # Модель для корпусов (Case)
-class Case(Product):
+class Case(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название корпуса")
     image = models.ImageField(upload_to='images/cases/', null=True, blank=True, verbose_name="Фото корпуса")
 
@@ -138,12 +158,14 @@ class Case(Product):
     dimensions = models.CharField(max_length=50, verbose_name="Размеры (ШхВхГ)", default="204 x 446 x 396 мм")
     weight_kg = models.FloatField(verbose_name="Вес", null=True, blank=True)
     warranty = models.IntegerField(verbose_name="Гарантия (мес.)", null=True, blank=True)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="case")
+    PRODUCT_TYPE = 'case'
 
     def __str__(self):
         return self.name
 
 # Модель для накопителей (Storage)
-class Storage(Product):
+class Storage(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название накопителя")
     storage_type = models.CharField(max_length=50, choices=[("HDD", "HDD"), ("SSD", "SSD"), ("NVMe", "NVMe")], verbose_name="Тип накопителя", default="HDD")
     capacity_gb = models.IntegerField(verbose_name="Емкость, ГБ", default=8000)
@@ -154,25 +176,29 @@ class Storage(Product):
     form_factor = models.CharField(max_length=50, verbose_name="Форм-фактор", default="3.5\"")
     interface = models.CharField(max_length=50, verbose_name="Интерфейс подключения", default="SATA-III")
     warranty = models.IntegerField(verbose_name="Гарантия (мес.)", default=12)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="storage")
+    PRODUCT_TYPE = 'storage'
 
     def __str__(self):
         return self.name
 
 # Модель операционной системы
-class OS(Product):
+class OS(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название операционной системы")
     line = models.CharField(max_length=50, verbose_name="Линейка", default="Windows 11")
     release = models.CharField(max_length=50, verbose_name="Выпуск", default="Professional")
     bit_version = models.CharField(max_length=20, verbose_name="Битность", default="64 bit")
     supply_type = models.CharField(max_length=50, verbose_name="Тип поставки", default="OEM (только в комплекте с ПК)")
     image = models.ImageField(upload_to='images/os/', null=True, blank=True, verbose_name="Фото операционной системы")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="os")
+    PRODUCT_TYPE = 'os'
 
     def __str__(self):
         return self.name
 
 
 
-class CPUCooler(Product):
+class CPUCooler(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название кулера")
     socket_compatibility = models.CharField(max_length=255, verbose_name="Совместимые сокеты", default="LGA 115x/1200, LGA 1700, 1851, AM4, AM5")
     cooler_type = models.CharField(max_length=50, verbose_name="Тип системы охлаждения", default="активная")
@@ -187,6 +213,8 @@ class CPUCooler(Product):
     height_mm = models.IntegerField(verbose_name="Высота кулера, мм", default=151)
     weight_kg = models.FloatField(verbose_name="Вес, кг", default=0.65)
     image = models.ImageField(upload_to='images/coolers/', null=True, blank=True, verbose_name="Фото кулера")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="cpucooler")
+    PRODUCT_TYPE = 'cpucooler'
 
     def __str__(self):
         return self.name

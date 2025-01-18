@@ -1,8 +1,9 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-    {% block title %}Products{% endblock %}
-    {% block css %}{% endblock %}
+{% block title %}Products{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'core/css/products.css' %}"> {% endblock %}
+
 {% block content %}
     <h2>Доступные категории и товары:</h2>
     <div class="categories">
@@ -12,8 +13,12 @@
                 <ul>
                     {% for item in items %}
                         <li>
+                            <img src="{{ item.name.image.url }}">
+                            {{ item.product.id }}
                             {{ item.name }}
                             <a href="{% url 'configurator' category item.id %}?clear=True">Начать конфигурацию</a>
+                            <a href="{% url 'add_to_cart' item.product.id %}">c</a>
+                            <a href="{% url 'add_to_favorites' item.product.id %}">f</a>
                         </li>
                     {% endfor %}
                 </ul>
