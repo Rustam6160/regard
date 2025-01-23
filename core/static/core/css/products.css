@@ -60,20 +60,6 @@ h3 {
     color: #0056b3;
 }
 
-/* Стили для ссылки внизу */
-a[href*="my_builds"] {
-    display: block;
-    text-align: center;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 16px;
-    max-width: 200px;
-    transition: background-color 0.3s ease;
-}
 
 a[href*="my_builds"]:hover {
     background-color: #0056b3;

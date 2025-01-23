@@ -12,6 +12,9 @@ class CommonComponentsAbstract:
         # Создаем или обновляем CPU
         instance = super().save(commit=False)
 
+        if 'image' in self.cleaned_data and self.cleaned_data['image']:
+            instance.image = self.cleaned_data['image']
+
         # Проверяем, есть ли связанный объект Product
         if hasattr(instance, 'product') and instance.product is not None:
             # Обновляем существующий объект Product

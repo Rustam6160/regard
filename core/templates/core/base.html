@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Default Title{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'configurator/css/base.css' %}">
+
     {% block css %} {% endblock %}
+    <link rel="stylesheet" href="{% static 'configurator/css/base.css' %}">
+
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -23,18 +25,18 @@
         <nav>
             <ul>
 {#                <li><a href="{% url 'home' %}">Home</a></li>#}
-                <li><a href="{% url 'my_builds' %}">My Builds</a></li>
-                <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'my_builds' %}" class="nav_link">My Builds</a></li>
+                <li><a href="{% url 'products' %}" class="nav_link">Products</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li><a href="{% url 'logout' %}" class="nav_link">Logout</a></li>
                 {% else %}
-                    <li><a href="{% url 'logout' %}">Login</a></li>
+                    <li><a href="{% url 'logout' %}" class="nav_link">Login</a></li>
                 {% endif %}
                 {% if request.user.is_superuser %}
-                    <a href="{% url 'edit_products' %}">Добавить продукт</a>
+                    <li><a href="{% url 'edit_products' %}" class="nav_link">Добавить продукт</a></li>
                 {% endif %}
-                <li><a href="{% url 'favorites_view' %}">Избранные</a></li>
-                <li><a href="{% url 'cart_view' %}">Корзина</a></li>
+                <li><a href="{% url 'favorites_view' %}" class="nav_link">Избранные</a></li>
+                <li><a href="{% url 'cart_view' %}" class="nav_link">Корзина</a></li>
             </ul>
         </nav>
     </header>

@@ -182,6 +182,7 @@ class Storage(AutoCreateProductMixin, models.Model):
     def __str__(self):
         return self.name
 
+
 # Модель операционной системы
 class OS(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название операционной системы")
@@ -195,7 +196,6 @@ class OS(AutoCreateProductMixin, models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class CPUCooler(AutoCreateProductMixin, models.Model):

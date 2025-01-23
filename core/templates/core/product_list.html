@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'core/css/products.css' %}"> {% endblock %}
+
+{% block content %}
+    <ul>
+        {% for item in products %}
+            <li>
+                <img src="{{ item.name.image.url }}">
+                {{ item.product.id }}
+                <a href="{% url 'product_features' item.product.type item.id %}">{{ item.name }}</a>
+                <a href="{% url 'configurator' item.product.type item.id %}?clear=True">Начать конфигурацию</a>
+                <a href="{% url 'add_to_cart' item.product.id %}">c</a>
+                <a href="{% url 'add_to_favorites' item.product.id %}">f</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+
+{% endblock %}

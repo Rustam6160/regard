@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'core/css/products.css' %}"> {% endblock %}
+
+{% block content %}
+    {% for field_name, field in field_values.items %}
+        <ul>
+            <li>
+            {% if field.url %}
+                {{ field_name }} : <img src="{{ field.url }}" style="width: 100px">
+            {% else %}
+                {{ field_name }} : {{ field }}
+            {% endif %}
+            </li>
+        </ul>
+    {% endfor %}
+
+
+
+
+
+{% endblock %}

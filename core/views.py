@@ -6,13 +6,11 @@ from django.views import View
 from django.views.generic import TemplateView, ListView
 from django.contrib.auth.decorators import login_required
 from configurator.models import *
+from django.db.models import Field
 
 
 class ProductView(View):
     def get(self, request):
-        pro = Product.objects.all()
-
-
         # Формирование контекста с категориями и их объектами
         categories = {
             "cpu": CPU.objects.all(),
@@ -26,7 +24,47 @@ class ProductView(View):
             "cpucooler": CPUCooler.objects.all(),
         }
         return render(request, 'core/products.html', {'items': categories})
-    
+
+
+class CategoryView(View):
+    def get(self, request, product_type):
+        categories = {
+            "cpu": CPU,
+            "motherboard": Motherboard,
+            "ram": RAM,
+            "gpu": GPU,
+            "psu": PSU,
+            "case": Case,
+            "storage": Storage,
+            "os": OS,
+            "cpucooler": CPUCooler,
+        }
+        products = categories.get(product_type).objects.all()
+        return render(request, 'core/product_list.html', context={'products': products})
+
+
+class ProductFeaturesView(View):
+    def get(self, request, product_type, product_id):
+        categories = {
+            "cpu": CPU,
+            "motherboard": Motherboard,
+            "ram": RAM,
+            "gpu": GPU,
+            "psu": PSU,
+            "case": Case,
+            "storage": Storage,
+            "os": OS,
+            "cpucooler": CPUCooler,
+        }
+        product = categories.get(product_type).objects.get(id=product_id)
+        instance = categories.get(product_type).objects.get(id=product_id)  # Получаем экземпляр модели
+        field_values = {field.verbose_name: getattr(instance, field.name) for field in instance._meta.get_fields() if
+                        isinstance(field, Field)}
+        field_values['price'] = instance.product.price
+        print(field_values)
+
+        return render(request, 'core/product_features.html', context={'product': product, 'field_values': field_values})
+
 
 @login_required
 def cart_view(request):
