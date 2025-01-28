@@ -19,7 +19,8 @@ class ProductView(View):
             "gpu": GPU.objects.all(),
             "psu": PSU.objects.all(),
             "case": Case.objects.all(),
-            "storage": Storage.objects.all(),
+            "hdd": HDD.objects.all(),
+            "ssd": SSD.objects.all(),
             "os": OS.objects.all(),
             "cpucooler": CPUCooler.objects.all(),
         }
@@ -35,7 +36,8 @@ class CategoryView(View):
             "gpu": GPU,
             "psu": PSU,
             "case": Case,
-            "storage": Storage,
+            "hdd": HDD,
+            'ssd': SSD,
             "os": OS,
             "cpucooler": CPUCooler,
         }
@@ -52,7 +54,8 @@ class ProductFeaturesView(View):
             "gpu": GPU,
             "psu": PSU,
             "case": Case,
-            "storage": Storage,
+            "hdd": HDD,
+            'ssd': SSD,
             "os": OS,
             "cpucooler": CPUCooler,
         }

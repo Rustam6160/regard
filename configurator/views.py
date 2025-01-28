@@ -172,6 +172,8 @@ class AddProduct(View):
             'ram': AddRAMForm,
             'psu': AddPSUForm,
             'cpucooler': AddCPUCoolerForm,
+            'hdd': AddHDDForm,
+            'ssd': AddSSDForm
         }
 
         form = form_classes.get(product_category, lambda: None)()
@@ -187,6 +189,8 @@ class AddProduct(View):
             'ram': AddRAMForm,
             'psu': AddPSUForm,
             'cpucooler': AddCPUCoolerForm,
+            'hdd': AddHDDForm,
+            'ssd': AddSSDForm
         }
 
         # Получаем класс формы из словаря или None
@@ -224,7 +228,8 @@ def selected_products_from_session(request):
         'gpu': GPU,
         'psu': PSU,
         'case': Case,
-        'storage': Storage,
+        'hdd': HDD,
+        'ssd': SSD,
         'os': OS,
         'cpucooler': CPUCooler,
     }

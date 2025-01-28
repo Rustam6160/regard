@@ -74,6 +74,26 @@ class AddCaseForm(CommonComponentsAbstract, forms.ModelForm):
         exclude = ['product']
 
 
+class AddHDDForm(CommonComponentsAbstract, forms.ModelForm):
+    type = forms.CharField(max_length=100, initial="hdd", widget=forms.HiddenInput())
+    price = forms.DecimalField(label="Цена", max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = HDD
+        fields = '__all__'
+        exclude = ['product']
+
+
+class AddSSDForm(CommonComponentsAbstract, forms.ModelForm):
+    type = forms.CharField(max_length=100, initial="ssd", widget=forms.HiddenInput())
+    price = forms.DecimalField(label="Цена", max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = SSD
+        fields = '__all__'
+        exclude = ['product']
+
+
 class AddPSUForm(CommonComponentsAbstract, forms.ModelForm):
     type = forms.CharField(max_length=100, initial="psu", widget=forms.HiddenInput())
     price = forms.DecimalField(label="Цена", max_digits=10, decimal_places=2)

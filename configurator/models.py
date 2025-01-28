@@ -35,7 +35,6 @@ class AutoCreateProductMixin:
         super().save(*args, **kwargs)
 
 
-
 # Модель для процессоров (CPU)
 class CPU(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название процессора")
@@ -54,6 +53,7 @@ class CPU(AutoCreateProductMixin, models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Модель для материнских плат (Motherboard)
 class Motherboard(AutoCreateProductMixin, models.Model):
@@ -74,6 +74,7 @@ class Motherboard(AutoCreateProductMixin, models.Model):
     def __str__(self):
         return self.name
 
+
 # Модель для оперативной памяти (RAM)
 class RAM(AutoCreateProductMixin, models.Model):
     name = models.CharField(max_length=100, verbose_name="Название ОЗУ")
@@ -92,6 +93,7 @@ class RAM(AutoCreateProductMixin, models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Модель для видеокарт (GPU)
 class GPU(AutoCreateProductMixin, models.Model):
@@ -114,6 +116,7 @@ class GPU(AutoCreateProductMixin, models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Модель для блоков питания (PSU)
 class PSU(AutoCreateProductMixin, models.Model):
@@ -138,6 +141,7 @@ class PSU(AutoCreateProductMixin, models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Модель для корпусов (Case)
 class Case(AutoCreateProductMixin, models.Model):
@@ -164,20 +168,32 @@ class Case(AutoCreateProductMixin, models.Model):
     def __str__(self):
         return self.name
 
-# Модель для накопителей (Storage)
-class Storage(AutoCreateProductMixin, models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название накопителя")
-    storage_type = models.CharField(max_length=50, choices=[("HDD", "HDD"), ("SSD", "SSD"), ("NVMe", "NVMe")], verbose_name="Тип накопителя", default="HDD")
-    capacity_gb = models.IntegerField(verbose_name="Емкость, ГБ", default=8000)
-    rpm = models.IntegerField(verbose_name="Скорость вращения шпинделя, об/мин", null=True, blank=True)  # Только для HDD
-    image = models.ImageField(upload_to='images/storage/', null=True, blank=True, verbose_name="Фото накопителя")
 
-    # Дополнительные параметры для сравнения
+# Модель для накопителей (Storage)
+class HDD(AutoCreateProductMixin, models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название hdd")
+    image = models.ImageField(upload_to='images/HDD/', null=True, blank=True, verbose_name="Фото hdd")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="hdd")
+    PRODUCT_TYPE = 'hdd'
+    capacity_gb = models.IntegerField(verbose_name="Емкость, ГБ", default=8000)
+    rpm = models.IntegerField(verbose_name="Скорость вращения шпинделя, об/мин", null=True, blank=True)
     form_factor = models.CharField(max_length=50, verbose_name="Форм-фактор", default="3.5\"")
     interface = models.CharField(max_length=50, verbose_name="Интерфейс подключения", default="SATA-III")
     warranty = models.IntegerField(verbose_name="Гарантия (мес.)", default=12)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="storage")
-    PRODUCT_TYPE = 'storage'
+
+    def __str__(self):
+        return self.name
+
+
+class SSD(AutoCreateProductMixin, models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название ssd")
+    image = models.ImageField(upload_to='images/SSD/', null=True, blank=True, verbose_name="Фото ssd")
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="ssd")
+    PRODUCT_TYPE = 'ssd'
+    capacity_gb = models.IntegerField(verbose_name="Емкость, ГБ", default=1000)
+    form_factor = models.CharField(max_length=50, verbose_name="Форм-фактор", default="2.5\"")
+    interface = models.CharField(max_length=50, verbose_name="Интерфейс подключения", default="SATA-III")
+    warranty = models.IntegerField(verbose_name="Гарантия (мес.)", default=36)
 
     def __str__(self):
         return self.name
@@ -228,7 +244,8 @@ class Build(models.Model):
     gpu = models.ForeignKey(GPU, on_delete=models.SET_NULL, null=True, blank=True)
     psu = models.ForeignKey(PSU, on_delete=models.SET_NULL, null=True, blank=True)
     case = models.ForeignKey(Case, on_delete=models.SET_NULL, null=True, blank=True)
-    storage = models.ForeignKey(Storage, on_delete=models.SET_NULL, null=True, blank=True)
+    hdd = models.ForeignKey(HDD, on_delete=models.SET_NULL, null=True, blank=True)
+    ssd = models.ForeignKey(SSD, on_delete=models.SET_NULL, null=True, blank=True)
     os = models.ForeignKey(OS, on_delete=models.SET_NULL, null=True, blank=True)
     cpucooler = models.ForeignKey(CPUCooler, on_delete=models.SET_NULL, null=True, blank=True)
 

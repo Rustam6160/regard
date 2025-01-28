@@ -12,55 +12,55 @@
                 {% if item.build.cpu %}
                     <div class="component">
                         {% if item.build.cpu.image %}<img src="{{ item.build.cpu.image.url }}" alt="{{ item.build.cpu.name }}">{% endif %}
-                        <p>CPU: {{ item.build.cpu.name }} ({{ item.build.cpu.price }})</p>
+                        <p>CPU: {{ item.build.cpu.name }} {{ item.build.cpu.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.motherboard %}
                     <div class="component">
                         {% if item.build.motherboard.image %}<img src="{{ item.build.motherboard.image.url }}" alt="{{ item.build.motherboard.name }}">{% endif %}
-                        <p>Motherboard: {{ item.build.motherboard.name }} ({{ item.build.motherboard.price }})</p>
+                        <p>Motherboard: {{ item.build.motherboard.name }} {{ item.build.motherboard.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.ram %}
                     <div class="component">
                         {% if item.build.ram.image %}<img src="{{ item.build.ram.image.url }}" alt="{{ item.build.ram.name }}">{% endif %}
-                        <p>RAM: {{ item.build.ram.name }} ({{ item.build.ram.price }})</p>
+                        <p>RAM: {{ item.build.ram.name }} {{ item.build.ram.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.gpu %}
                     <div class="component">
                         {% if item.build.gpu.image %}<img src="{{ item.build.gpu.image.url }}" alt="{{ item.build.gpu.name }}">{% endif %}
-                        <p>GPU: {{ item.build.gpu.name }} ({{ item.build.gpu.price }})</p>
+                        <p>GPU: {{ item.build.gpu.name }} {{ item.build.gpu.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.psu %}
                     <div class="component">
                         {% if item.build.psu.image %}<img src="{{ item.build.psu.image.url }}" alt="{{ item.build.psu.name }}">{% endif %}
-                        <p>PSU: {{ item.build.psu.name }} ({{ item.build.psu.price }})</p>
+                        <p>PSU: {{ item.build.psu.name }} {{ item.build.psu.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.case %}
                     <div class="component">
                         {% if item.build.case.image %}<img src="{{ item.build.case.image.url }}" alt="{{ item.build.case.name }}">{% endif %}
-                        <p>Case: {{ item.build.case.name }} ({{ item.build.case.price }})</p>
+                        <p>Case: {{ item.build.case.name }} {{ item.build.case.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.storage %}
                     <div class="component">
                         {% if item.build.storage.image %}<img src="{{ item.build.storage.image.url }}" alt="{{ item.build.storage.name }}">{% endif %}
-                        <p>Storage: {{ item.build.storage.name }} ({{ item.build.storage.price }})</p>
+                        <p>Storage: {{ item.build.storage.name }} {{ item.build.storage.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.os %}
                     <div class="component">
                         {% if item.build.os.image %}<img src="{{ item.build.os.image.url }}" alt="{{ item.build.os.name }}">{% endif %}
-                        <p>OS: {{ item.build.os.name }} ({{ item.build.os.price }})</p>
+                        <p>OS: {{ item.build.os.name }} {{ item.build.os.price }}</p>
                     </div>
                 {% endif %}
                 {% if item.build.cpucooler %}
                     <div class="component">
                         {% if item.build.cpucooler.image %}<img src="{{ item.build.cpucooler.image.url }}" alt="{{ item.build.cpucooler.name }}">{% endif %}
-                        <p>CPU Cooler: {{ item.build.cpucooler.name }} ({{ item.build.cpucooler.price }})</p>
+                        <p>CPU Cooler: {{ item.build.cpucooler.name }} {{ item.build.cpucooler.price }}</p>
                     </div>
                 {% endif %}
                 <a href="{% url 'delete_build' item.build.id %}">Удалить</a>
